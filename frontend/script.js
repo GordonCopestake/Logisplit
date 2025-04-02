@@ -6,6 +6,12 @@ const exampleInput = document.getElementById('example-input');
 const outputInput = document.getElementById('output-input');
 const addPatternBtn = document.getElementById('add-pattern-btn');
 
+// --- Define the Backend Base URL ---
+// This uses the same protocol (http/https) and hostname/IP as the frontend,
+// but explicitly targets port 8000 for the backend.
+const backendBaseUrl = `${window.location.protocol}//${window.location.hostname}:8000`;
+// --- ---
+
 dropZone.addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => {
     if (e.target.files.length) {
@@ -46,17 +52,20 @@ function uploadFile(file) {
 
     const reader = new FileReader();
     reader.onload = function () {
-        fetch('http://localhost:8000/upload/stream', {
+        // Use the dynamic backend URL
+        fetch(`${backendBaseUrl}/upload/stream`, { // <-- CHANGED
             method: 'POST',
             body: formData
         });
 
-        const source = new EventSource('http://localhost:8000/progress');
+        // Use the dynamic backend URL for EventSource
+        const source = new EventSource(`${backendBaseUrl}/progress`); // <-- CHANGED
         source.onmessage = function (event) {
             if (event.data === 'done') {
                 source.close();
                 status.innerText = 'Download complete.';
-                fetch('http://localhost:8000/download')
+                // Use the dynamic backend URL for download
+                fetch(`${backendBaseUrl}/download`) // <-- CHANGED
                   .then(response => response.blob())
                   .then(blob => {
                       const url = window.URL.createObjectURL(blob);
@@ -124,7 +133,8 @@ function previewPDF(file) {
 }
 
 function loadPatterns() {
-    fetch('http://localhost:8000/patterns.json')
+    // Use the dynamic backend URL
+    fetch(`${backendBaseUrl}/patterns.json`) // <-- CHANGED
         .then(response => response.json())
         .then(patterns => {
             patternList.innerHTML = '';
@@ -141,7 +151,8 @@ addPatternBtn.addEventListener('click', () => {
     const output = outputInput.value.trim();
     if (!example || !output) return;
 
-    fetch('http://localhost:8000/save_pattern_example', {
+    // Use the dynamic backend URL
+    fetch(`${backendBaseUrl}/save_pattern_example`, { // <-- CHANGED
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ example, output })
