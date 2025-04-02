@@ -1,0 +1,10 @@
+[
+  {
+    "regex": "Delivery Advice Note (\\d+)[/\\\\](\\d+)",
+    "rename": "{0}-{1}"
+  },
+  {
+    "regex": "ID[:\\s]*(\\d+)",
+    "rename": "ID_{0}"
+  }
+]
