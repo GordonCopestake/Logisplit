@@ -1,14 +1,4 @@
 
-def get_unique_filename(directory, filename):
-    base, ext = os.path.splitext(filename)
-    counter = 1
-    new_filename = filename
-    while os.path.exists(os.path.join(directory, new_filename)):
-        new_filename = f"{base}_{counter}{ext}"
-        counter += 1
-    return new_filename
-
-
 from fastapi import FastAPI, UploadFile, File, Request
 from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
