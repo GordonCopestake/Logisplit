@@ -1,4 +1,3 @@
-
 import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
@@ -23,7 +22,12 @@ def process_page(doc_path, page_number, output_dir, patterns, dpi=200):
     img_path = os.path.join(output_dir, f"page_{page_number+1}.png")
     pix.save(img_path)
 
-    text = pytesseract.image_to_string(Image.open(img_path))
+    # Crop to top third of the image
+    img = Image.open(img_path)
+    width, height = img.size
+    top_third = img.crop((0, 0, width, height // 3))
+
+    text = pytesseract.image_to_string(top_third)
 
     identifier = None
     for pattern in patterns:
@@ -41,6 +45,7 @@ def process_page(doc_path, page_number, output_dir, patterns, dpi=200):
     single_doc.save(pdf_out)
     single_doc.close()
     doc.close()
+    img.close()
     os.remove(img_path)
     return page_number
 
